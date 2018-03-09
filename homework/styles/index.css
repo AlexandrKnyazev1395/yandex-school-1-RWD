@@ -1,0 +1,289 @@
+html {
+  font-size: 14px;
+  
+}
+
+
+/*layout*/
+.appContainer {
+  display: grid;
+  grid-template-columns: 1fr  704px 1fr;
+  grid-template-areas:
+    ". . . "
+    ". header ."
+    ". cardsContainer .";
+  grid-row-gap: 40px;
+}
+@media screen and (max-width: 704px) {
+  .appContainer {
+    grid-template-columns: 100%;
+    grid-template-areas:
+    "header"
+    "cardsContainer";
+  }
+}
+@media screen and (min-width: 1380px) {
+  .appContainer {
+    grid-template-columns: 1fr  80% 1fr;
+    grid-column-gap: 50px;
+  }
+}
+
+header {
+  grid-area: header;
+}
+
+.cardsContainer {
+  grid-area: cardsContainer;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-column-gap: 1.14285rem;
+  grid-row-gap: 2rem; 
+  grid-auto-flow: dense;
+}
+
+
+/*cards */
+.cardsContainer-card {
+  display: grid;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cardsContainer-card_smallWithImg {
+  height: 230px;
+  grid-column: span 2;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "cardTitle"
+    "cardImageWrapper";
+}
+@media screen and (min-width: 1380px) {
+  .cardsContainer-card_smallWithImg {
+    height: 320px;
+  }
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-card_smallWithImg {
+    grid-column: span 3;
+  }
+}
+@media screen and (max-width: 300px) {
+  .cardsContainer-card_smallWithImg {
+    grid-column: span 6;
+    height: 200px;
+  }
+}
+
+.cardsContainer-card_smallWithDescription {
+  height: 230px;
+  grid-column: span 2;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "cardTitle"
+    "cardDescription"
+    "channelName";
+}
+@media screen and (min-width: 1380px) {
+  .cardsContainer-card_smallWithDescription {
+    height: 320px;
+  }
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-card_smallWithDescription  {
+    grid-column: span 3;
+    grid-template-rows: auto 1fr auto 30px;
+    grid-template-areas:
+    "cardTitle"
+    "cardDescription"
+    "channelName"
+    ".";
+  }
+}
+@media screen and (max-width: 300px) {
+  .cardsContainer-card_smallWithDescription  {
+    grid-column: span 6;
+  }
+}
+
+
+.cardsContainer-card_medium {
+  height: 300px;
+  grid-column: span 3;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "cardTitle"
+    "cardImageWrapper"
+    "cardDescription";
+}
+@media screen and (min-width: 1380px) {
+  .cardsContainer-card_medium {
+    height: 400px;
+  }
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-card_medium  {
+    grid-column: span 6;
+  }
+}
+
+
+.cardsContainer-card_large {
+  height: 243px;
+  grid-column: span 6;
+  grid-template-columns: 66% 1fr;
+  grid-column-gap: 16px;
+  grid-template-areas:
+    "cardImageWrapper cardTitle"
+    "cardImageWrapper cardDescription"
+    "cardImageWrapper .";
+}
+@media screen and (min-width: 1380px) {
+  .cardsContainer-card_large {
+    grid-column-gap: 20px;
+    height: 450px;
+  }
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-card_large  {
+    height: auto;
+    grid-template-columns: 100%;
+    grid-template-rows: auto 1fr auto 30px;
+    grid-template-areas:
+      "cardTitle"
+      "cardImageWrapper"
+      "cardDescription"
+      "."
+  }
+}
+
+.cardsContainer-cardTitle {
+  grid-area: cardTitle;
+  z-index: 99;
+  margin: 0;
+  padding-bottom: 7px;
+  background-color: white;
+  font-family: "YS Text";
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: normal;
+  font-size: 1.35rem; 
+}
+.cardsContainer-card_smallWithImg .cardsContainer-cardTitle,
+.cardsContainer-card_smallWithDescription .cardsContainer-cardTitle {
+  font-size: 1.214rem
+}
+
+.cardsContainer-imageWrapper {
+  grid-area: cardImageWrapper;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  bottom: 0px;
+}
+
+.cardsContainer-cardImage {
+  grid-area: cardImage; 
+  border-radius: 5px;
+  width: auto;
+}
+@media screen and (min-width: 1380px) {
+  .cardsContainer-cardImage {
+    width: 100%;
+  }
+}
+
+.cardsContainer-cardImage img{
+  width: inherit;
+}
+
+.cardsContainer-card_smallWithImg .cardsContainer-cardImage,
+.cardsContainer-card_medium .cardsContainer-cardImage {
+  position: absolute; /*to cut image by top */
+  bottom: 5px;
+}
+
+.cardsContainer-channelName {
+  margin: 0;
+  padding-top: 16px;
+  padding-bottom: 8px;
+  font-family: "YS Text";
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: normal;
+}
+
+.cardsContainer-cardDescription {
+  grid-area: cardDescription;
+  margin: 0;
+  font-size: 1rem;
+  font-family: "YS Text";
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 20px;
+  overflow: hidden;
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-cardDescription  {
+    max-height: 100px;
+  }
+}
+
+.cardsContainer-card_medium  .cardsContainer-cardDescription {
+  width: 87%;
+  max-height: 62px;
+  overflow: hidden; 
+}
+
+.cardsContainer-likeButton {
+  position: absolute;
+  width: 17px;
+  height: 16px;
+  top: calc(100% - 25px);
+  left: calc(100% - 25px);
+  background-image: url('../assets/Heart.png');
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+.cardsContainer-card_smallWithImg .cardsContainer-likeButton {
+  top: calc(100% - 35px);
+}
+
+.cardsContainer-elipsisButton {
+  position: absolute;
+  width: 17px;
+  height: 16px;
+  background-image: url('../assets/Actions.png');
+  background-color: transparent;
+  background-repeat: no-repeat;
+  outline: none;
+  border: none;
+}
+.cardsContainer-card_smallWithImg .cardsContainer-elipsisButton {
+  top: 10%;
+  left: calc(100% - 25px);
+}
+.cardsContainer-card_smallWithDescription .cardsContainer-elipsisButton {
+  top: calc(100% - 18px);
+  left: calc(100% - 60px);
+}
+
+.cardsContainer-card_medium .cardsContainer-elipsisButton {
+  top: calc(100% - 55px);
+  left: calc(100% - 25px);
+}
+
+.cardsContainer-card_large .cardsContainer-elipsisButton {
+  top: calc(100% - 18px);
+  left: 70%;
+}
+
+.cardsContainer-likeButton:hover, .cardsContainer-elipsisButton:hover  {
+  transform: scale(1.1);
+  cursor: pointer;
+}
