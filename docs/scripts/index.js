@@ -1,10 +1,10 @@
 window.onload = function () {
-  loadCardsData();
+  createCards();
 }
 
-
-function loadCardsData() {
-  const data = [
+function createCards() {
+  //json  с данными
+  const cardsData = [
     {
       title: "Civilization VI: Rise and Fall review: A few turns closer to a Golden Age",
       titleColor: '#576433',
@@ -119,15 +119,17 @@ function loadCardsData() {
     },
   ];
 
-
+  //элемент, содержащий карточки
   const cardsContainer = document.getElementsByClassName('cardsContainer')[0];
-  const cards = data.map((elementInfo, index) => {
-    const cardsFactory = new CardsFactory(elementInfo);
-    const newCard = cardsFactory.createCardElement();
-    if (newCard)
-      cardsContainer.appendChild(newCard);
-  })
 
+  for (let i = 0; i < cardsData.length; i++) {
+    //создаем экземпляр карточной фабрики
+    const cardsFactory = new CardsFactory(cardsData[i]);
+    //фабрика создает карточку
+    const newCard = cardsFactory.createCardElement();
+    //вставляем карточку в контейнер для карточек
+    cardsContainer.appendChild(newCard);
+  }
 }
 
 class CardsFactory {
@@ -135,6 +137,7 @@ class CardsFactory {
     this.elementInfo = elementInfo;
   }
 
+  //в зависимости от размера создаем карточку
   createCardElement() {
     const size = this.elementInfo.size;
     if (size === 's') {
@@ -149,123 +152,121 @@ class CardsFactory {
   }
 }
 
-const cardsChildrenClasses = {
-  title: '.cardsContainer-cardTitle',
-  image: '.cardsContainer-cardImage',
-  description: '.cardsContainer-cardDescription',
-  likeButton: '.cardsContainer-likeButton',
-  channelName: '.cardsContainer-channelName'
-}
-
-function addTitleToCard(element, titleInfo) {
-  const cardTitle = element.querySelector(cardsChildrenClasses.title);
-  cardTitle.textContent = titleInfo.title;
-  cardTitle.style.color = titleInfo.titleColor;
-  return element;
-}
-
-function addImageToCard(element, imageInfo) {
-  const cardImage = element.querySelector(cardsChildrenClasses.image);
-  const smallImg = cardImage.querySelector('img');
-  smallImg.src = imageInfo.src; //imageInfo.modificator ? getImgName() : imageInfo.src;
-  const sourcesArray = element.querySelectorAll('source');
-  const largeImgSource = sourcesArray[0];
-  const mediumImgSource = sourcesArray[1];
-
-  const largeImgName = getImgName('large');
-  const mediumImgName = getImgName('medium');
-  largeImgSource.srcset = largeImgName
-  mediumImgSource.srcset = mediumImgName
-
-  return element;
-
-  function getImgName(modificator) {
-    const src = imageInfo.src;
-    const modificatorsInSrc = {
-      large: 3,
-      medium: 2
-    }
-    const regexp = /(.+).png/;
-    const srcWithoutExt = src.match(regexp)[1];
-
-    return srcWithoutExt + `@${modificatorsInSrc[modificator]}` + 'x.png'
-  }
-}
-
-function addDescriptionToCard(element, descriptionInfo) {
-  const cardDescription = element.querySelector(cardsChildrenClasses.description);
-  cardDescription.textContent = descriptionInfo.text;
-  return element;
-}
-
-function addChannelNameToCard(element, channelNameInfo) {
-  const cardChannelName = element.querySelector(cardsChildrenClasses.channelName);
-  cardChannelName.textContent = channelNameInfo.name;
-  return element;
-}
-
 const cardsConstructors = {
+
   SmallCardElement: function (elementInfo) {
-    const elementClass = 'cardsContainer-card';
-    let template;
+    let template; //шаблон, который будет заполняться элементами
+    let cardsChildren;
+    //есть картинка, но нет описания
     if (elementInfo.image && !elementInfo.description) {
       template = document.querySelector('#smallCardWithImageTemplate').content;
-      const imageInfo = { src: elementInfo.image };
-      template = addImageToCard(template, imageInfo);
+      cardsChildren = new CardsChildren(template, elementInfo);
+      template = cardsChildren.addImageToCard();
     }
+    //есть описание, нет картинки
     else if (!elementInfo.image && elementInfo.description) {
       template = document.querySelector('#smallCardWithDescriptionTemplate').content;
-      const descriptionInfo = { text: elementInfo.description };
-      template = addDescriptionToCard(template, descriptionInfo);
-      const channelNameInfo = { name: elementInfo.channelName }
-      template = addChannelNameToCard(template, channelNameInfo)
+      cardsChildren = new CardsChildren(template, elementInfo);
+      template = cardsChildren.addDescriptionToCard();
+      template = cardsChildren.addChannelNameToCard()
     }
     else {
       console.warn('s-size image must contain either image or description')
       return null;
     }
-    const titleInfo = {
-      title: elementInfo.title,
-      titleColor: elementInfo.titleColor
-    }
-    template = addTitleToCard(template, titleInfo);
+    template = cardsChildren.addTitleToCard();
+    //клонируем заполненный шаблон в новую карточку
     const newCard = template.cloneNode(true);
     return newCard;
   },
 
   MeiumCardElement: function (elementInfo) {
     let template = document.querySelector('#mediumCardTemplate').content;
-    const titleInfo = {
-      title: elementInfo.title,
-      titleColor: elementInfo.titleColor
-    }
-    template = addTitleToCard(template, titleInfo);
-
-    const imageInfo = { src: elementInfo.image, modificator: 'medium' };
-    template = addImageToCard(template, imageInfo);
-
-    const descriptionInfo = { text: elementInfo.description };
-    template = addDescriptionToCard(template, descriptionInfo);
-
+    const cardsChildren = new CardsChildren(template, elementInfo);
+    template = cardsChildren.addTitleToCard();
+    template = cardsChildren.addImageToCard();
+    template = cardsChildren.addDescriptionToCard();
     const newCard = template.cloneNode(true);
     return newCard
   },
 
   LargeCardElement: function (elementInfo) {
     let template = document.querySelector('#largeCardTemplate').content;
-    const titleInfo = {
-      title: elementInfo.title,
-      titleColor: elementInfo.titleColor
-    }
-    template = addTitleToCard(template, titleInfo);
-
-    const imageInfo = { src: elementInfo.image, modificator: 'large' };
-    template = addImageToCard(template, imageInfo);
-    const descriptionInfo = { text: elementInfo.description };
-    template = addDescriptionToCard(template, descriptionInfo);
-
+    const cardsChildren = new CardsChildren(template, elementInfo);
+    template = cardsChildren.addTitleToCard();
+    template = cardsChildren.addImageToCard();
+    template = cardsChildren.addDescriptionToCard();
     const newCard = template.cloneNode(true);
     return newCard
   }
 
+}
+
+class CardsChildren {
+
+  constructor(element, elementInfo) {
+    this.element = element;
+    this.titleInfo = {
+      title: elementInfo.title,
+      titleColor: elementInfo.titleColor
+    }
+    this.imageInfo = { src: elementInfo.image };
+    this.descriptionInfo = { text: elementInfo.description };
+    this.channelNameInfo = { name: elementInfo.channelName };
+    this.cardsChildrenClasses = {
+      title: '.cardsContainer-cardTitle',
+      image: '.cardsContainer-cardImage',
+      description: '.cardsContainer-cardDescription',
+      likeButton: '.cardsContainer-likeButton',
+      channelName: '.cardsContainer-channelName'
+    }
+  }
+
+  addTitleToCard() {
+    const { element, titleInfo } = this;
+    const cardTitle = element.querySelector(this.cardsChildrenClasses.title);
+    cardTitle.textContent = titleInfo.title;
+    cardTitle.style.color = titleInfo.titleColor;
+    return element;
+  }
+
+  addImageToCard() {
+    const { element, imageInfo } = this;
+    const cardImage = element.querySelector(this.cardsChildrenClasses.image);
+    const smallImg = cardImage.querySelector('img');
+    smallImg.src = imageInfo.src;
+    const sourcesArray = element.querySelectorAll('source');
+    const largeImgSource = sourcesArray[0];
+    const mediumImgSource = sourcesArray[1];
+    const largeImgName = getImgName('large');
+    const mediumImgName = getImgName('medium');
+    largeImgSource.srcset = largeImgName
+    mediumImgSource.srcset = mediumImgName
+    return element;
+
+    function getImgName(modificator) {
+      const src = imageInfo.src;
+      const modificatorsInSrc = {
+        large: 3,
+        medium: 2
+      }
+      const regexp = /(.+).png/;
+      const srcWithoutExt = src.match(regexp)[1];
+      return srcWithoutExt + `@${modificatorsInSrc[modificator]}` + 'x.png'
+    }
+  }
+
+  addDescriptionToCard() {
+    const { element, descriptionInfo } = this; 
+    const cardDescription = element.querySelector(this.cardsChildrenClasses.description);
+    cardDescription.textContent = descriptionInfo.text;
+    return element;
+  }
+
+  addChannelNameToCard() {
+    const {element, channelNameInfo} = this;
+    const cardChannelName = element.querySelector(this.cardsChildrenClasses.channelName);
+    cardChannelName.textContent = channelNameInfo.name;
+    return element;
+  }
 }

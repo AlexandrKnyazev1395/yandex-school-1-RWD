@@ -3,7 +3,6 @@ html {
   
 }
 
-
 /*layout*/
 .appContainer {
   display: grid;
@@ -246,6 +245,7 @@ header {
   top: calc(100% - 25px);
   left: calc(100% - 25px);
   background-image: url('../assets/Heart.png');
+  background-repeat: no-repeat;
   background-color: transparent;
   outline: none;
   border: none;
@@ -281,6 +281,11 @@ header {
 .cardsContainer-card_large .cardsContainer-elipsisButton {
   top: calc(100% - 18px);
   left: 70%;
+}
+@media screen and (max-width: 704px) {
+  .cardsContainer-card_large .cardsContainer-elipsisButton {
+    left: 5px;
+  }
 }
 
 .cardsContainer-likeButton:hover, .cardsContainer-elipsisButton:hover  {
